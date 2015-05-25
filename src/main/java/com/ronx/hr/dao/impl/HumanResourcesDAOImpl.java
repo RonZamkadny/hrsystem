@@ -2,34 +2,54 @@ package com.ronx.hr.dao.impl;
 
 import com.ronx.hr.dao.HumanResourcesDAO;
 import com.ronx.hr.model.Employee;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate3.HibernateTemplate;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import org.springframework.stereotype.Repository;
+
 import java.util.List;
 
 @Repository
-public class HumanResourcesDAOImpl<T> implements HumanResourcesDAO<T> {
+public class HumanResourcesDAOImpl implements HumanResourcesDAO {
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    @Autowired
+    private SessionFactory sessionFactory;
 
-    public void create(T entity) {
-        entityManager.persist(entity);
+    public void create(Employee employee) {
+        Session session = sessionFactory.openSession();
+        Transaction tx = session.beginTransaction();
+        session.save(employee);
+        tx.commit();
+        session.close();
     }
 
-    public void getEntityById(T entity, Long id) {
-        entityManager.find(entity.getClass(), id);
+    public Employee getEntityById(Long id) {
+        Session session = sessionFactory.openSession();
+        try {
+            return (Employee) session.get(Employee.class, id);
+        } finally {
+            session.close();
+        }
     }
 
-    public void update() {
+    public void update(Employee employee) {
 
     }
 
-    public void delete() {
+    public List<Employee> getAll() {
+        Session session = sessionFactory.openSession();
+        List<Employee> employeeList = session.createQuery("from Employee").list();
+        session.close();
+        return employeeList;
+    }
 
+    public void delete(Long id) {
+        Session session = sessionFactory.openSession();
+        Transaction tx = session.beginTransaction();
+        session.delete(session.get(Employee.class, id));
+        tx.commit();
+        session.close();
     }
 }

@@ -1,12 +1,13 @@
 package com.ronx.hr.dao;
 
-/**
- * Created by Ron on 22.05.2015.
- */
-public interface HumanResourcesDAO<T> {
+import com.ronx.hr.model.Employee;
 
-    void create(T entity);
-    void getEntityById(T entity, Long id);
-    void update();
-    void delete();
+import java.util.List;
+
+public interface HumanResourcesDAO {
+    void create(Employee employee);
+    Employee getEntityById(Long id);
+    void update(Employee employee);
+    void delete(Long id);
+    List<Employee> getAll();
 }
